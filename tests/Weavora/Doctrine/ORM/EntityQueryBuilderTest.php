@@ -1,6 +1,6 @@
 <?php
 
-namespace Weavora\Tests\Doctrine\ORM;
+namespace Weavora\Doctrine\ORM;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
@@ -40,6 +40,9 @@ class EntityQueryBuilderTest extends TestCase
         return $repository;
     }
 
+    /**
+     * @return \Mockery\Mock|EntityManager
+     */
     protected function mockEntityManager()
     {
         $em = \Mockery::mock('\Doctrine\ORM\EntityManager')->shouldIgnoreMissing();
