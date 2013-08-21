@@ -100,7 +100,7 @@ class PostRepository extends ORM\EntityRepository
     {
         return $this
             ->filter() // use PostQueryBuilder
-                ->filterByColumn('Post.Category', $category) // get only posts in specified category
+                ->filterByColumn('Post.category', $category) // get only posts in specified category
                 ->paginate($page, $itemsPerPage) // get only specified page
                 ->recentFirst()  // most recent posts should go first
             ->fetchAll(); // get posts
@@ -117,7 +117,7 @@ class PostRepository extends ORM\EntityRepository
         return $this
             ->filter() // use PostQueryBuilder
                 ->select('COUNT(Post.id)') // calculate count
-                ->filterByColumn('Post.Author', $author) // calculate only author's posts
+                ->filterByColumn('Post.author', $author) // calculate only author's posts
                 ->groupBy('Post.author') // group by author
             ->fetchScalar(); // get scalar result (first column of first row)
     }
@@ -203,11 +203,6 @@ $queryBuilder->fetchOne();
 $queryBuilder->select('COUNT(*)')->fetchScalar();
 ```
 
-### Roadmap
-
- * Methods to work with joins
- * Release stable version
-
 DBAL Extensions
 ---------------
 
@@ -231,12 +226,6 @@ doctrine:
 // You can specify retry number as 3rd argument
 $doctrine->getConnection()->locksSafeUpdate("UPDATE posts SET category_id = :category", ['category' => 2]);
 ```
-
-### Roadmap
-
- * Method to iterate across big result without RAM issues: iterate($query, $parameters = array(), $itemsPerPage = 5000) : Iterable
- * Release stable version
-
 
 About
 =====
