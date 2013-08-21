@@ -6,6 +6,44 @@ Doctrine2 Extensions [![Build Status](https://secure.travis-ci.org/weavora/doctr
 
 This library extend base Doctrine2 classes with some useful things.
 
+Installation
+------------
+
+This library may be installed using Composer or by cloning it from its GitHub repository. These options are outlined below.
+
+**Composer**
+
+You can read more about Composer and its main repository at
+[http://packagist.org](http://packagist.org "Packagist"). To install
+ using Composer this doctrine extensions, first install Composer for your project using the instructions on the
+Packagist home page. You can then define your development dependency on doctrine-extensions using the
+suggested parameters below. While every effort is made to keep the master branch
+stable, you may prefer to use the current stable version tag instead.
+
+    {
+        "require-dev": {
+            "weavora/doctrine-extensions": "dev-master@dev"
+        }
+    }
+
+To install, you then may call:
+
+    composer.phar install
+
+**Git / GitHub**
+
+The git repository hosts the development version in its master branch. You can
+install this using Composer by referencing dev-master as your preferred version
+in your project's composer.json file as the earlier example shows.
+
+You may also install this development version:
+
+    git clone git://github.com/weavora/doctrine-extensions.git
+    cd doctrine-extensions
+
+The above processes will install library to doctrine-extensions folder.
+
+
 ORM Extensions
 --------------
 
