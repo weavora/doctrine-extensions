@@ -200,7 +200,8 @@ class EntityQueryBuilder extends QueryBuilder
     {
         $this->appendParameters($parameters);
         $this->limit(1, 0);
-        return $this->getQuery()->getScalarResult();
+        $result = $this->getQuery()->getSingleResult();
+        return is_array($result) ? array_shift($result) : $result;
     }
 
     /**
