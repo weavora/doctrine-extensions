@@ -125,7 +125,7 @@ class PostRepository extends ORM\EntityRepository
                 ->select('COUNT(Post.id)') // calculate count
                 ->filterByColumn('author', $author) // calculate only author's posts
                 ->groupBy('Post.author') // group by author
-            ->fetchScalar(); // get scalar result (first column of first row), limit 1 will be placed automatically
+            ->fetchScalar(); // get scalar result (first column of first row)
     }
 }
 
@@ -149,44 +149,64 @@ $alias = $queryBuilder->getEntityAlias();
 **filterByColumn($columnName, $value, $strict = true) : EntityQueryBuilder** | *Compare column with specified value*
 
 ```php
-$queryBuilder->filterByColumn('title', 'Post 1'); // SELECT * FROM Entity\Post Post WHERE Post.title = :p1, [p1 = 'Post 1']
-$queryBuilder->filterByColumn('category', array(1,2,3)); // SELECT * FROM Entity\Post Post WHERE Post.category IN (1,2,3)
-$queryBuilder->filterByColumn('author', null); // SELECT * FROM Entity\Post Post WHERE Post.author IS NULL
-$queryBuilder->filterByColumn('author', null, false); // SELECT * FROM Entity\Post Post
-$queryBuilder->filterByColumn('author', 1, false); // SELECT * FROM Entity\Post Post WHERE Post.author = 1
+// SELECT * FROM Entity\Post Post WHERE Post.title = :p1, [p1 = 'Post 1']
+$queryBuilder->filterByColumn('title', 'Post 1');
+
+// SELECT * FROM Entity\Post Post WHERE Post.category IN (1,2,3)
+$queryBuilder->filterByColumn('category', array(1,2,3));
+
+// SELECT * FROM Entity\Post Post WHERE Post.author IS NULL
+$queryBuilder->filterByColumn('author', null);
+
+// SELECT * FROM Entity\Post Post
+$queryBuilder->filterByColumn('author', null, false);
+
+// SELECT * FROM Entity\Post Post WHERE Post.author = 1
+$queryBuilder->filterByColumn('author', 1, false);
 ```
 
 **filterByStatement($statement, $parameters = array()) : EntityQueryBuilder** | *Add custom statement*
 
 ```php
-$queryBuilder->filterByStatement('Post.title = :title', ['title' => 'Post 1']); // SELECT * FROM Entity\Post Post WHERE Post.title = :title, [title = 'Post 1']
-$queryBuilder->filterByColumn('Post.category IN (1,2,3)'); // SELECT * FROM Entity\Post Post WHERE Post.category IN (1,2,3)
+// SELECT * FROM Entity\Post Post WHERE Post.title = :title, [title = 'Post 1']
+$queryBuilder->filterByStatement('Post.title = :title', ['title' => 'Post 1']);
+
+// SELECT * FROM Entity\Post Post WHERE Post.category IN (1,2,3)
+$queryBuilder->filterByColumn('Post.category IN (1,2,3)');
 ```
 
 **limit($maxResults, $offset = null) : EntityQueryBuilder** | *Limit results*
 
 ```php
-$queryBuilder->limit(10); // SELECT * FROM Entity\Post Post LIMIT 0, 10
-$queryBuilder->limit(10, 15); // SELECT * FROM Entity\Post Post LIMIT 15, 10
+// SELECT * FROM Entity\Post Post LIMIT 0, 10
+$queryBuilder->limit(10);
+
+// SELECT * FROM Entity\Post Post LIMIT 15, 10
+$queryBuilder->limit(10, 15);
 ```
 
 **fetchAll($parameters = array()) : EntityClass[]** | *Fetch result*
 
 ```php
-$queryBuilder->fetchAll(); // SELECT * FROM Entity\Post Post -> Post[]
-$queryBuilder->filterByStatement('Post.title = :title')->fetchAll(['title' => 'Post 1']); // SELECT * FROM Entity\Post Post LIMIT 0, 10 -> Post[]
+// SELECT * FROM Entity\Post Post -> Post[]
+$queryBuilder->fetchAll();
+
+// SELECT * FROM Entity\Post Post LIMIT 0, 10 -> Post[]
+$queryBuilder->filterByStatement('Post.title = :title')->fetchAll(['title' => 'Post 1']);
 ```
 
 **fetchOne($parameters = array()) : EntityClass** | *Fetch first result*
 
 ```php
-$queryBuilder->fetchOne(); // SELECT * FROM Entity\Post Post LIMIT 0, 1 -> Post
+// SELECT * FROM Entity\Post Post LIMIT 0, 1 -> Post
+$queryBuilder->fetchOne();
 ```
 
 **fetchScalar($parameters = array()) : int|string|float|null** | *Fetch scalar result*
 
 ```php
-$queryBuilder->select('COUNT(*)')->fetchScalar(); // SELECT COUNT(*) FROM Entity\Post Post LIMIT 0, 1 -> int
+// SELECT COUNT(*) FROM Entity\Post Post LIMIT 0, 1 -> int
+$queryBuilder->select('COUNT(*)')->fetchScalar();
 ```
 
 ### Roadmap
