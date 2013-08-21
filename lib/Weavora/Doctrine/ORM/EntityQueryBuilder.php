@@ -4,6 +4,7 @@ namespace Weavora\Doctrine\ORM;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository as DoctrineEntityRepository;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query;
 
@@ -69,7 +70,12 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Add where statement to filter by column
+     * Apply filter by column
+     *
+     * Example:
+     *   $queryBuilder->filterByColumn('Post.title', 'Superman');
+     *   $queryBuilder->filterByColumn('Post.categoryId', array(1,2,3));
+     *   $queryBuilder->filterByColumn('Post.subtitle', null);
      *
      * @param string $columnName
      * @param mixed $value
@@ -83,21 +89,24 @@ class EntityQueryBuilder extends QueryBuilder
             return $this;
         }
 
-        $columnPath = $this->getEntityAlias() . '.' . $columnName;
-
         if (is_array($value) || $value instanceof \Iterator) {
-            return $this->filterByStatement($this->expr()->in($columnPath, $value));
+            return $this->filterByStatement($this->expr()->in($columnName, $value));
         }
 
         if ($value === null) {
-            return $this->filterByStatement($this->expr()->isNull($columnPath));
+            return $this->filterByStatement($this->expr()->isNull($columnName));
         }
 
         $parameterName = $this->findUnusedParameterName();
-        return $this->filterByStatement($columnPath . ' = :' . $parameterName, array($parameterName => $value));
+        return $this->filterByStatement($columnName . ' = :' . $parameterName, array($parameterName => $value));
     }
 
     /**
+     * Apply statement filter
+     *
+     * Example:
+     *   $queryBuilder->filterByStatement('Post.title = :title', ['title' => 'Superman']);
+     *
      * @param string $statement DQL
      * @param array $parameters
      * @return $this
@@ -110,6 +119,8 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
+     * Limit max number of results
+     *
      * @param $maxResults
      * @param null $offset
      * @return $this
@@ -121,6 +132,23 @@ class EntityQueryBuilder extends QueryBuilder
             $this->setFirstResult($offset);
         }
         return $this;
+    }
+
+    /**
+     * Limit results with selected page
+     *
+     * @param int $page Page number 1 .. n
+     * @param int $itemsPerPage Item per page
+     * @return $this
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
+     */
+    public function paginate($page = 1, $itemsPerPage = 10)
+    {
+        if ($page < 1) {
+            throw new ORMInvalidArgumentException("Incorrect page number: {$page}. Only positive page number allowed.");
+        }
+
+        return $this->limit($itemsPerPage, ($page - 1) * $itemsPerPage);
     }
 
     /**

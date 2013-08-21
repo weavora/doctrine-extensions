@@ -147,32 +147,63 @@ class EntityQueryBuilderTest extends TestCase
         $queryBuilder = new EntityQueryBuilder($this->em, $this->mockRepository('Entity\Post'));
 
         // EQUALS filter
-        $queryBuilder->filterByColumn('title', 'Post 1');
+        $queryBuilder->filterByColumn('Post.title', 'Post 1');
         $this->assertEquals('SELECT Post FROM Entity\Post Post WHERE Post.title = :p1', $queryBuilder->getDQL());
         $this->assertEqualsQueryParameters(array(
             'p1' => 'Post 1'
         ), $queryBuilder->getParameters());
 
         // IS NULL filter
-        $queryBuilder->filterByColumn('authorId', null);
+        $queryBuilder->filterByColumn('Post.authorId', null);
         $this->assertEquals('SELECT Post FROM Entity\Post Post WHERE Post.title = :p1 AND Post.authorId IS NULL', $queryBuilder->getDQL());
         $this->assertEqualsQueryParameters(array(
             'p1' => 'Post 1'
         ), $queryBuilder->getParameters());
 
         // Optional EQUALS filter
-        $queryBuilder->filterByColumn('categoryId', null, false);
+        $queryBuilder->filterByColumn('Post.categoryId', null, false);
         $this->assertEquals('SELECT Post FROM Entity\Post Post WHERE Post.title = :p1 AND Post.authorId IS NULL', $queryBuilder->getDQL());
         $this->assertEqualsQueryParameters(array(
             'p1' => 'Post 1'
         ), $queryBuilder->getParameters());
 
         // IN filter
-        $queryBuilder->filterByColumn('publishStatus', array('published', 'approved'));
+        $queryBuilder->filterByColumn('Post.publishStatus', array('published', 'approved'));
         $this->assertEquals('SELECT Post FROM Entity\Post Post WHERE Post.title = :p1 AND Post.authorId IS NULL AND Post.publishStatus IN(\'published\', \'approved\')', $queryBuilder->getDQL());
         $this->assertEqualsQueryParameters(array(
             'p1' => 'Post 1'
         ), $queryBuilder->getParameters());
+    }
+
+    public function testLimit()
+    {
+        $queryBuilder = new EntityQueryBuilder($this->em, $this->mockRepository('Entity\Post'));
+
+        $queryBuilder->limit(10, 15);
+        $this->assertEquals($queryBuilder->getMaxResults(), 10);
+        $this->assertEquals($queryBuilder->getFirstResult(), 15);
+
+        $queryBuilder->setFirstResult(25);
+        $queryBuilder->limit(50);
+        $this->assertEquals($queryBuilder->getMaxResults(), 50);
+        $this->assertEquals($queryBuilder->getFirstResult(), 25);
+    }
+
+    public function testPaginate()
+    {
+        $queryBuilder = new EntityQueryBuilder($this->em, $this->mockRepository('Entity\Post'));
+        $queryBuilder->paginate(1, 15);
+
+        $this->assertEquals($queryBuilder->getMaxResults(), 15);
+        $this->assertEquals($queryBuilder->getFirstResult(), 0);
+
+        $queryBuilder->paginate(5, 20);
+
+        $this->assertEquals($queryBuilder->getMaxResults(), 20);
+        $this->assertEquals($queryBuilder->getFirstResult(), 80);
+
+        $this->setExpectedException('Doctrine\ORM\ORMInvalidArgumentException');
+        $queryBuilder->paginate(0, 10);
     }
 
 

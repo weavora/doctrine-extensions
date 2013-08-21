@@ -49,13 +49,7 @@ class PostQueryBuilder extends ORM\EntityQueryBuilder
 {
     public function published()
     {
-        return $this->filterByColumn('publishStatus', Post::STATUS_PUBLISHED);
-    }
-
-    public function paginate($page = 1, $itemsPerPage = 10)
-    {
-        $offset = ($page > 0) ? ($page - 1) * $itemsPerPage : 0;
-        return $this->limit($itemsPerPage, $offset);
+        return $this->filterByColumn('Post.publishStatus', Post::STATUS_PUBLISHED);
     }
 
     public function recentFirst()
@@ -106,7 +100,7 @@ class PostRepository extends ORM\EntityRepository
     {
         return $this
             ->filter() // use PostQueryBuilder
-                ->filterByColumn('category', $category) // get only posts in specified category
+                ->filterByColumn('Post.Category', $category) // get only posts in specified category
                 ->paginate($page, $itemsPerPage) // get only specified page
                 ->recentFirst()  // most recent posts should go first
             ->fetchAll(); // get posts
@@ -123,7 +117,7 @@ class PostRepository extends ORM\EntityRepository
         return $this
             ->filter() // use PostQueryBuilder
                 ->select('COUNT(Post.id)') // calculate count
-                ->filterByColumn('author', $author) // calculate only author's posts
+                ->filterByColumn('Post.Author', $author) // calculate only author's posts
                 ->groupBy('Post.author') // group by author
             ->fetchScalar(); // get scalar result (first column of first row)
     }
@@ -150,19 +144,19 @@ $alias = $queryBuilder->getEntityAlias();
 
 ```php
 // SELECT * FROM Entity\Post Post WHERE Post.title = :p1, [p1 = 'Post 1']
-$queryBuilder->filterByColumn('title', 'Post 1');
+$queryBuilder->filterByColumn('Post.title', 'Post 1');
 
 // SELECT * FROM Entity\Post Post WHERE Post.category IN (1,2,3)
-$queryBuilder->filterByColumn('category', array(1,2,3));
+$queryBuilder->filterByColumn('Post.category', array(1,2,3));
 
 // SELECT * FROM Entity\Post Post WHERE Post.author IS NULL
-$queryBuilder->filterByColumn('author', null);
+$queryBuilder->filterByColumn('Post.author', null);
 
 // SELECT * FROM Entity\Post Post
-$queryBuilder->filterByColumn('author', null, false);
+$queryBuilder->filterByColumn('Post.author', null, false);
 
 // SELECT * FROM Entity\Post Post WHERE Post.author = 1
-$queryBuilder->filterByColumn('author', 1, false);
+$queryBuilder->filterByColumn('Post.author', 1, false);
 ```
 
 **filterByStatement($statement, $parameters = array()) : EntityQueryBuilder** | *Add custom statement*
@@ -212,7 +206,6 @@ $queryBuilder->select('COUNT(*)')->fetchScalar();
 ### Roadmap
 
  * Methods to work with joins
- * New method paginate($page = 1, $itemsPerPage = 10) : EntityQueryBuilder
  * Release stable version
 
 DBAL Extensions
