@@ -4,21 +4,17 @@ Doctrine2 Extensions [![Build Status](https://secure.travis-ci.org/weavora/doctr
 [![Total Downloads](https://poser.pugx.org/weavora/doctrine-extensions/downloads.png)](https://packagist.org/packages/weavora/doctrine-extensions)
 [![Latest Stable Version](https://poser.pugx.org/weavora/doctrine-extensions/v/stable.png)](https://packagist.org/packages/weavora/doctrine-extensions)
 
-This library extend base Doctrine2 classes with some useful things.
+This library extends Doctrine2 base classes with some useful things.
 
 Installation
 ------------
 
-This library may be installed using Composer or by cloning it from its GitHub repository. These options are outlined below.
+This library may be installed using Composer or by cloning it from its GitHub repository. These options are described below.
 
 **Composer**
 
-You can read more about Composer and its main repository at
-[http://packagist.org](http://packagist.org "Packagist"). To install
- using Composer this doctrine extensions, first install Composer for your project using the instructions on the
-Packagist home page. You can then define your development dependency on doctrine-extensions using the
-suggested parameters below. While every effort is made to keep the master branch
-stable, you may prefer to use the current stable version tag instead.
+You can read more about Composer and its main repository on
+[http://packagist.org](http://packagist.org "Packagist"). To install these doctrine extensions using Composer, first install Composer for your project using the instructions on the Packagist home page. You can then define your development dependency on doctrine-extensions using the parameters suggested below. While every effort is made to keep the master branch stable, you may prefer to use the current stable version tag instead.
 
     {
         "require-dev": {
@@ -26,51 +22,47 @@ stable, you may prefer to use the current stable version tag instead.
         }
     }
 
-To install, you then may call:
+To install, you may call:
 
     composer.phar install
 
 **Git / GitHub**
 
 The git repository hosts the development version in its master branch. You can
-install this using Composer by referencing dev-master as your preferred version
-in your project's composer.json file as the earlier example shows.
+install it using Composer by referencing dev-master as your preferred version
+in your project's composer.json file as the previous example shows.
 
 You may also install this development version:
 
     git clone git://github.com/weavora/doctrine-extensions.git
     cd doctrine-extensions
 
-The above processes will install library to doctrine-extensions folder.
+The above processes will install library to the doctrine-extensions folder.
 
 
 ORM Extensions
 --------------
 
-Doctrine advice to use entity repositories that will contain business logic related to entities retrieve.
-Most probably you will use query builder inside repository to build DQL.
-The issue is that standard query build has quite overall API and doesn't provide such useful shortcuts like named scopes,
-single method to apply custom criteria with parameters and etc.
+Doctrine advices to use entity repositories that will contain business logic related to entities retrieval.
+Most probably, you will use a query builder inside the repository to build DQL.
+The issue is that a standard query builder has quite general API and doesn't provide such useful shortcuts like named scopes, a single method to apply custom criteria with parameters, etc.
 
-This library tries to fix missing things and make your life a little bit easier.
+This library is intended to fix what's missing and make your life a little bit easier.
 
 ### How to organize repositories
 
-Let's say you want to create blog application. Probably you create post entity which have references to category,
-author and comments. And now you're thinking about approach to organize your repositories.
+Let's say you want to create a blog application. You'll probably create a post entity which will have references to the category, author and comments. And now you're thinking about an approach to organize your repositories.
 
 Common issues with repositories:
 
  - You have to duplicate code as soon as you have duplicated conditions
  - Even simple methods with few conditions and ordering look massive
 
-You can solve first issue with custom query builder per entity. It will also hide your criteria details from repository
-which not really need to know that.
+You can solve the first issue with a custom query builder per entity. It will also hide your criteria details from the repository that doesn't really need to know that.
 
-To solve issue with huge  and not really well descriptive methods we create extension for query builder with some helpful
-shortcuts to make code more readable.
+To solve the issue with huge and not very descriptive methods, you'll create an extension for the query builder with some helpful shortcuts to make code more readable.
 
-Example of how PostQueryBuilder & PostRepository could look like:
+An example of how PostQueryBuilder & PostRepository could look like:
 
 ```php
 <?php
@@ -138,8 +130,8 @@ class PostRepository extends ORM\EntityRepository
     {
         return $this
             ->filter() // use PostQueryBuilder
-                ->filterByColumn('Post.category', $category) // get only posts in specified category
-                ->paginate($page, $itemsPerPage) // get only specified page
+                ->filterByColumn('Post.category', $category) // get only posts in the specified category
+                ->paginate($page, $itemsPerPage) // get only the specified page
                 ->recentFirst()  // most recent posts should go first
             ->fetchAll(); // get posts
     }
@@ -157,13 +149,13 @@ class PostRepository extends ORM\EntityRepository
                 ->select('COUNT(Post.id)') // calculate count
                 ->filterByColumn('Post.author', $author) // calculate only author's posts
                 ->groupBy('Post.author') // group by author
-            ->fetchScalar(); // get scalar result (first column of first row)
+            ->fetchScalar(); // get scalar results (the first column of the first row)
     }
 }
 
 ```
 
-Quite simple, yeah?
+Quite simple, right?
 
 ### API / EntityQueryBuilder
 
@@ -178,7 +170,7 @@ Quite simple, yeah?
 $alias = $queryBuilder->getEntityAlias();
 ```
 
-**filterByColumn($columnName, $value, $strict = true) : EntityQueryBuilder** | *Compare column with specified value*
+**filterByColumn($columnName, $value, $strict = true) : EntityQueryBuilder** | *Compare a column with the specified value*
 
 ```php
 // SELECT * FROM Entity\Post Post WHERE Post.title = :p1, [p1 = 'Post 1']
@@ -197,7 +189,7 @@ $queryBuilder->filterByColumn('Post.author', null, false);
 $queryBuilder->filterByColumn('Post.author', 1, false);
 ```
 
-**filterByStatement($statement, $parameters = array()) : EntityQueryBuilder** | *Add custom statement*
+**filterByStatement($statement, $parameters = array()) : EntityQueryBuilder** | *Add a custom statement*
 
 ```php
 // SELECT * FROM Entity\Post Post WHERE Post.title = :title, [title = 'Post 1']
@@ -217,7 +209,7 @@ $queryBuilder->limit(10);
 $queryBuilder->limit(10, 15);
 ```
 
-**fetchAll($parameters = array()) : EntityClass[]** | *Fetch result*
+**fetchAll($parameters = array()) : EntityClass[]** | *Fetch a result*
 
 ```php
 // SELECT * FROM Entity\Post Post -> Post[]
@@ -227,14 +219,14 @@ $queryBuilder->fetchAll();
 $queryBuilder->filterByStatement('Post.title = :title')->fetchAll(['title' => 'Post 1']);
 ```
 
-**fetchOne($parameters = array()) : EntityClass** | *Fetch first result*
+**fetchOne($parameters = array()) : EntityClass** | *Fetch the first result*
 
 ```php
 // SELECT * FROM Entity\Post Post LIMIT 0, 1 -> Post
 $queryBuilder->fetchOne();
 ```
 
-**fetchScalar($parameters = array()) : int|string|float|null** | *Fetch scalar result*
+**fetchScalar($parameters = array()) : int|string|float|null** | *Fetch a scalar result*
 
 ```php
 // SELECT COUNT(*) FROM Entity\Post Post LIMIT 0, 1 -> int
@@ -244,9 +236,7 @@ $queryBuilder->select('COUNT(*)')->fetchScalar();
 DBAL Extensions
 ---------------
 
-There is only one small enhancements to DBAL classes is `Connection::lockSafeUpdate` that allow you to restart query in case of
-transaction was locked and failed. But maybe it will be useful as example how to extend Doctrine connection class with custom
-methods.
+There is only one small enhancement to DBAL classes - `Connection::lockSafeUpdate` that allows you to restart a query in case a transaction has been locked and failed. Maybe, it will be useful to show how to extend Doctrine connection class with custom methods.
 
 **How to configure**
 
@@ -260,8 +250,8 @@ doctrine:
 **Usage example**
 
 ```
-// Method will retry query if it failed cause of lock first time
-// You can specify retry number as 3rd argument
+// Method will retry a query if it failed because of lock the first time
+// You can specify the retry number as the 3rd argument
 $doctrine->getConnection()->locksSafeUpdate("UPDATE posts SET category_id = :category", ['category' => 2]);
 ```
 
@@ -271,12 +261,12 @@ About
 Stability
 ---------
 
-**It's not stable yet**. Please, use it in your own risk.
+**It's not stable yet**. Please, use it at your own risk.
 
 Requirements
 ------------
 
-- Any flavor of PHP 5.3 or above should do
+- Any flavor of PHP 5.3 or later should do
 - [optional] PHPUnit 3.5+ to execute the test suite (phpunit --version)
 
 Submitting bugs and feature requests
@@ -288,7 +278,7 @@ Author
 ------
 
 Weavora LLC - <http://weavora.com> - <http://twitter.com/weavora><br />
-See also the list of [contributors](https://github.com/weavora/doctrine-extensions/contributors) which participated in this project.
+Also see the list of [contributors](https://github.com/weavora/doctrine-extensions/contributors) who have participated in this project.
 
 License
 -------
