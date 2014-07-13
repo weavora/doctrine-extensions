@@ -205,20 +205,58 @@ class EntityQueryBuilder extends QueryBuilder
     }
 
     /**
-     * Find unused parameter name
+     * Generate parameter name
      *
      * @return string
      */
     protected function findUnusedParameterName()
     {
-        $parameters = $this->getParameters();
         $index = 0;
-
+        $usedParameters = $this->getUsedParameterNames();
         do {
             $index++;
-            $parameterName = 'p' . $index;
-        } while ($parameters->containsKey($parameterName));
+            $parameterName = 'p'. $index;
+        } while (in_array($parameterName, $usedParameters));
 
         return $parameterName;
+    }
+
+    /**
+     * Get parameters that are already used
+     *
+     * @return array
+     */
+    private function getUsedParameterNames(){
+        $parameters = $this->getParameters();
+        $names = [];
+        foreach ($parameters as $p) {
+            array_push($names, $p->getName());
+        }
+        return $names;
+    }
+
+    /**
+     * Get parameter values
+     *
+     * @return array
+     */
+    private function getUsedParameterValues(){
+        $parameters = $this->getParameters();
+
+        $names = [];
+        foreach ($parameters as $p) {
+            array_push($names, $p->getValue());
+        }
+        return $names;
+    }
+
+    /**
+     * Get SQL query with parameters
+     *
+     * @return string
+     */
+    function showQuery()
+    {
+        return vsprintf(str_replace('?', '%s', $this->getQuery()->getSql()), $this->getUsedParameterValues());
     }
 }
